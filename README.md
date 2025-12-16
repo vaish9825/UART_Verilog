@@ -1,31 +1,53 @@
-# Verilog UART with 16x Oversampling
+# Verilog UART 
 
-A robust UART (Universal Asynchronous Receiver-Transmitter) implementation in Verilog. This project features a parameterized baud rate generator and uses **16x oversampling** logic for the receiver to ensure stable data synchronization and noise immunity.
+A robust **UART (Universal Asynchronous Receiver–Transmitter)** implementation written in Verilog.  
+This design features a **parameterized baud rate generator** and a **16× oversampling receiver**, ensuring reliable data synchronization, accurate bit sampling, and improved noise immunity.
 
-## Features
-* **Modular Design:** Separate TX, RX, and Baud Rate Generator modules.
-* **Robust Synchronization:** Receiver uses 16x oversampling to capture data at the center of the bit period.
-* **Configurable:** Baud rate and Clock frequency are parameterized.
-* **Verified:** Validated via simulation at 115200 Baud.
+---
 
-## Simulation Results
-The design was verified using a self-checking testbench.
-![UART Waveform](simlation/sim_wf.jpeg)
-*Figure 1: Simulation waveform showing successful transmission and reception of ASCII 'A' (0x41) at 115200 baud.*
+## ✨ Key Features
+- **Modular Architecture:** Clean separation of Transmitter (TX), Receiver (RX), and Baud Rate Generator modules.
+- **Reliable Synchronization:** RX module uses **16× oversampling** to sample data at the center of each bit period.
+- **Highly Configurable:** Baud rate and system clock frequency are fully parameterized.
+- **Simulation Verified:** Validated at **115200 baud** using a self-checking testbench.
 
-## Module Description
-### 1. Baud Rate Generator
-Generates a "tick" signal 16 times faster than the baud rate. This allows the RX module to subdivide a bit period into 16 slices for precise sampling.
+---
 
-### 2. UART RX (Receiver)
-* **Idle State:** Waits for the RX line to go low (Start Bit).
-* **Start Bit Detection:** verifies the start bit by checking the middle of the pulse (Tick 7/15).
-* **Data Sampling:** Samples each data bit at the exact center (Tick 15/15) to avoid edge instability.
+## 🧪 Simulation Results
+The design was verified through functional simulation using a self-checking testbench.
 
-### 3. UART TX (Transmitter)
-Maintains standard RS-232 timing by holding each bit for 16 ticks before transitioning.
+![UART Waveform](sim_wf.jpeg)
 
-## How to Run
-1.  Add all files in `src/` and `tb/` to your simulator (Vivado, ModelSim, Icarus Verilog).
-2.  Set `tb_uart` as the top module.
-3.  Run simulation for 200us.
+*Figure: Simulation waveform demonstrating successful transmission and reception of ASCII character **'A' (0x41)** at 115200 baud.*
+
+---
+
+## 🧩 Module Overview
+
+### 1️⃣ Baud Rate Generator
+Generates a timing **tick at 16× the configured baud rate**, enabling precise subdivision of each bit period.  
+This tick signal drives both the TX timing and RX oversampling logic.
+
+---
+
+### 2️⃣ UART RX (Receiver)
+- **Idle Detection:** Monitors the RX line for a low transition indicating a start bit.
+- **Start Bit Validation:** Confirms a valid start bit by sampling at the midpoint (**tick 7/15**).
+- **Data Sampling:** Samples each data bit at the center of the bit window (**tick 15/15**) to minimize edge-related instability.
+- **Stop Bit Check:** Ensures correct frame completion before asserting data valid.
+
+---
+
+### 3️⃣ UART TX (Transmitter)
+- Serializes parallel input data according to the UART frame format.
+- Maintains standard UART timing by holding each transmitted bit for **16 tick cycles**.
+- Ensures accurate and consistent bit transitions.
+
+---
+
+## ▶️ How to Run
+1. Add all Verilog source files from `src/` and testbench files from `tb/` to your simulator  
+   *(Vivado, ModelSim, or Icarus Verilog)*.
+2. Set `tb_uart` as the top-level module.
+3. Run the simulation for **~200 µs** to observe complete TX/RX operation.
+
